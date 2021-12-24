@@ -1,5 +1,5 @@
 # Memories-Project
-### This a memories website built using MERN stack which have login, signup, creating a memory, editing a memory, like the memory, delete the memory functionalities in it.
+### This is a memories website built using MERN stack which has a login, signup, creating a memory, editing a memory, like the memory, delete the memory functionalities in it.
 &nbsp;
 <img src="./Readme_Images/1.png" />
 &nbsp;
