@@ -1,28 +1,24 @@
 import React, { useState } from 'react'
-import { Avatar, Button, Paper, Grid, Typography, Container, TextField } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import useStyles from './styles';
-import Input from './Input.js';
+import './main.css';
+import logo from './user.png';
 
 import { signup, signin } from '../../actions/auth.js';
 
 const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' };
 
 const Auth = () => {
-    const classes = useStyles();
     const dispatch = useDispatch();
     const history = useNavigate();
-    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState(initialState);
     const [isSignup, setIsSignup] = useState(false);
 
     const switchMode = () => {
         setFormData(initialState);
         setIsSignup((prevIsSignup) => !prevIsSignup);
-        setShowPassword(false);
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -34,46 +30,49 @@ const Auth = () => {
     }
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value});
 
-    const handleShowPassword = () => setShowPassword((prevShowPassword) => !prevShowPassword)
-
     return (
-        <div>
-            <Container component="main" maxwidth="xs" style={{width:"500px", marginBottom:"50px"}}>
-                <Paper className={classes.paper} elevation={3}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography variant="h5">{isSignup ? "Sign Up" : "Sign In"}</Typography>
-                    <form className={classes.form} onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            {
-                                isSignup && (
-                                    <>
-                                        <Input name="firstName" label="First Name" handleChange={handleChange} autoFocus half />
-                                        <Input name="lastName" label="Last Name" handleChange={handleChange} half />
-                                    </>
-                                )
-                            }
+        <div className='container'>
+                <div className='form-heading'>
+                    <img className='logo' src={logo} alt="logo" />
+                    <h2 className='title'>{isSignup ? "Sign Up" : "Sign In"}</h2>
+                </div>
+                <form onSubmit={handleSubmit}>
+                    {
+                        isSignup && (
+                            <>
+                            <div className='name-container'>
+                                <div className='input-container'>
+                                    <label className='input-label'>First Name</label>
+                                    <input className='field' type="text" name='firstName' onChange={handleChange} />
+                                </div>
+                                <div className='input-container'>
+                                    <label className='input-label'>Last Name</label>
+                                    <input className='field' type="text" name='lastName' onChange={handleChange} />
+                                </div>
+                            </div>
+                            </>
+                        )
+                    }
+                    
+                    <div className='input-container'>
+                            <label className='input-label'>Email</label>
+                            <input className='field' type="email" name='email' onChange={handleChange} />
+                    </div>
+                    <div className='input-container'>
+                            <label className='input-label'>Password</label>
+                            <input className='field' type="password" name='password' onChange={handleChange} />
+                    </div>
 
-                            <Input name="email" label="Email Address" handleChange={handleChange} type="email" />
-                            <Input name="password" label="Password" handleChange={handleChange} type={showPassword ? 'text' : 'password'} handleShowPassword ={handleShowPassword} />
-
-                            { isSignup && <Input name="confirmPassword" label="Repeat Password" handleChange={handleChange} type="password" /> }
-
-                        </Grid>
-                        
-                        <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>{ isSignup ? 'Sign Up' : 'Sign In' }</Button>
-
-                        <Grid container justifyContent="flex-end">
-                            <Grid item>
-                            <Button onClick={switchMode}>
-                                { isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign Up" }
-                            </Button>
-                            </Grid>
-                        </Grid>
-                    </form>
-                </Paper>
-            </Container>
+                    { isSignup && (
+                        <div className='input-container'>
+                                <label className='input-label'>Confirm Password</label>
+                                <input className='field' type="text" name='confirmPassword' onChange={handleChange}/>
+                        </div>
+                    )}
+                    <button type='submit' className='btn auth-btn'>{ isSignup ? 'Sign Up' : 'Sign In' }</button>
+                </form>
+                <button className='btn auth-btn switch-btn' onClick={switchMode}>{ isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign Up" }</button>
+                
         </div>
     )
 }

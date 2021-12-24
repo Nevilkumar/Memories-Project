@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Typography, Paper } from '@material-ui/core';
 import FileBase from 'react-file-base64';
 import { useDispatch, useSelector } from 'react-redux';
 
-import useStyles from './styles.js';
 import { createPost, updatePost } from '../../actions/posts.js';
+import './main.css';
 
 const Form = ({currentId, setCurrentId}) => {
-    const classes = useStyles();
     const dispatch = useDispatch();
     const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);
     const user = JSON.parse(localStorage.getItem('profile'));
@@ -18,13 +16,11 @@ const Form = ({currentId, setCurrentId}) => {
     const [postData, setPostData] = useState({
         title: '',
         message: '',
-        tags: '',
         selectedFile: ''
     })
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         if(currentId){
             dispatch(updatePost(currentId, { ...postData, name: user?.result?.name } ));
         } else{
@@ -35,60 +31,43 @@ const Form = ({currentId, setCurrentId}) => {
     }
     const clear = () => {
         setCurrentId(null);
-        setPostData({ title: '', message: '', tags: '', selectedFile: ''})
+        setPostData({ title: '', message: '', selectedFile: ''})
     }
 
 
     if(!user?.result?.name){
         return(
-            <Paper className={classes.paper}>
-                <Typography variant="h6" align="center">
-                    Please Sign In to create your own Memories and like other memories.
-                </Typography>
-            </Paper>
+            <div className='create-post'>
+                <h2 className='create-post-heading'>Please Sign In to create your own Memories and like other's Memories.</h2>
+            </div>
         )
     }
 
     return (    
-        <Paper className={classes.paper}>
-            <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
-                <Typography variant = "h6">{currentId? 'Editing' : 'Creating'} a Memory</Typography>
-                 <TextField 
-                    name="title" 
-                    variant="outlined" 
-                    label="title" 
-                    fullWidth
-                    value={postData.title}
-                    onChange={(e) => setPostData({ ...postData, title: e.target.value })}
-                 />
-                 <TextField 
-                    name="message" 
-                    variant="outlined" 
-                    label="message" 
-                    fullWidth
-                    value={postData.message}
-                    onChange={(e) => setPostData({ ...postData, message: e.target.value })}
-                 />
-                 <TextField 
-                    name="tags" 
-                    variant="outlined" 
-                    label="tags" 
-                    fullWidth
-                    value={postData.tags}
-                    onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',') })}
-                 />
+        
+        <div className='create-post'>
+                <h2 className='create-post-heading'>{currentId? 'Editing' : 'Creating'} A Memory</h2>
+                <form onSubmit={handleSubmit}>
+                
+                    <div className='input-container'>
+                            <label className='label'>Title</label>
+                            <input name="title" spellCheck="false" className='create-field' type="text" onChange={(e) => setPostData({ ...postData, title: e.target.value })} value={postData.title} />
+                    </div>
+                    <div className='input-container'>
+                            <label className='label'>Message</label>
+                            <input name="message" spellCheck="false" className='create-field' type="text" onChange={(e) => setPostData({ ...postData, message: e.target.value })} value={postData.message} />
+                    </div>
+                    <div className='input-container'>
+                        <label className="custom-file-upload">
+                            <FileBase type="file" multiple={false} onDone ={({base64}) => setPostData({ ...postData, selectedFile: base64})} />
+                            Upload An Image
+                        </label>
+                    </div>
+                    <button type='submit' className='btn auth-btn'>Submit</button>
+                </form>
+                <button type='submit' className='btn auth-btn btn1' onClick={clear}>Reset</button>
+        </div>
 
-                <div className={classes.fileInput}>
-                    <FileBase
-                        type="file"
-                        multiple={false}
-                        onDone ={({base64}) => setPostData({ ...postData, selectedFile: base64})}    
-                     />
-                </div>
-                <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
-                <Button variant="contained" color="secondary" size="large" onClick={clear} fullWidth>Clear</Button>
-            </form>
-        </Paper>
     )
 }
 
